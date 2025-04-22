@@ -1,0 +1,240 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Fund Management API",
+        "description": "API for managing investment funds",
+        "contact": {
+            "email": "ricardof.campeol@gmail.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/funds": {
+            "get": {
+                "tags": [
+                    "Funds"
+                ],
+                "summary": "List all funds",
+                "operationId": "fab27508692393239aacff6974584481",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "manager",
+                        "in": "query",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "start_year",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of funds"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Funds"
+                ],
+                "summary": "Create a new fund",
+                "operationId": "45ca5393489ca15a41a04fbb2f44661b",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "start_year",
+                                    "fund_manager_id"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "start_year": {
+                                        "type": "integer"
+                                    },
+                                    "fund_manager_id": {
+                                        "type": "string",
+                                        "format": "uuid"
+                                    },
+                                    "aliases": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "companies": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "uuid"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Fund successfully created"
+                    }
+                }
+            }
+        },
+        "/api/funds/{id}": {
+            "get": {
+                "tags": [
+                    "Funds"
+                ],
+                "summary": "Get fund by ID",
+                "operationId": "b286fdef91b6d190e5b318e86ba1efa7",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Fund details"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Funds"
+                ],
+                "summary": "Update a fund",
+                "operationId": "f5dcd9bb1ef986d7da4521cf198ade95",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "start_year": {
+                                        "type": "integer"
+                                    },
+                                    "fund_manager_id": {
+                                        "type": "string"
+                                    },
+                                    "aliases": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "companies": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Fund updated"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Funds"
+                ],
+                "summary": "Delete a fund",
+                "operationId": "2cc5f9da3a3c318dea6fb5ac5cddafda",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Fund deleted"
+                    }
+                }
+            }
+        },
+        "/api/funds/duplicates": {
+            "get": {
+                "tags": [
+                    "Funds"
+                ],
+                "summary": "Find potential duplicates",
+                "operationId": "1762ec182465b25299db198376730a4f",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "fund_manager_id",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of potential duplicates"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Funds",
+            "description": "Funds"
+        }
+    ]
+}
