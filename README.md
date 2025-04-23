@@ -1,61 +1,142 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🛠️ Fundslack – Fund Management System
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel 12 backend system designed for managing investment funds, their aliases, fund managers, and related companies.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📌 Overview
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+This project provides a complete backend service to manage fund records and support data curation workflows, including duplicate detection via event-driven architecture.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+It includes:
 
-## Learning Laravel
+- Fully normalized relational data model
+- RESTful API with filtering and CRUD support
+- Duplicate fund detection using events & listeners
+- Swagger (OpenAPI) documentation
+- Docker support for local development
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 🧱 Tech Stack
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Laravel 12
+- MySQL (via Docker)
+- Docker & Docker Compose
+- Swagger (l5-swagger)
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🧰 Features
 
-### Premium Partners
+- Create, read, update and delete funds
+- Relate funds with fund managers and companies
+- Add aliases to funds
+- Detect potential duplicates by name or alias per manager
+- Log and handle duplicate fund warnings via Laravel events
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development/)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## 🚀 Getting Started
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 1. Clone the repo
 
-## Code of Conduct
+```bash
+git clone https://github.com/cmprc/fundslack.git
+cd fundslack
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 2. Start containers
 
-## Security Vulnerabilities
+```bash
+docker-compose up -d
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### 3. Install dependencies
+
+```bash
+composer install
+```
+
+### 4. Set up environment
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+Update `.env` with:
+
+```
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=canoe
+DB_USERNAME=canoe
+DB_PASSWORD=secret
+```
+
+### 5. Run migrations and seed
+
+```bash
+php artisan migrate --seed
+```
+
+---
+
+## 📚 API Documentation
+
+Swagger docs available at:
+
+```
+http://localhost:8000/api/documentation
+```
+
+Includes full documentation for all `/api/funds` endpoints.
+
+---
+
+## 🧪 Endpoints Summary
+
+| Method | Endpoint              | Description                         |
+|--------|-----------------------|-------------------------------------|
+| GET    | /api/funds            | List funds with optional filters    |
+| GET    | /api/funds/{id}       | Get single fund                     |
+| GET    | /api/funds/duplicates | List of potential duplicated funds  |
+| POST   | /api/funds            | Create new fund                     |
+| PUT    | /api/funds/{id}       | Update fund                         |
+| DELETE | /api/funds/{id}       | Delete fund                         |
+
+Filters available: `name`, `fund_manager_id`, `start_year`.
+
+---
+
+## 🔄 Event-Driven Process
+
+### Duplicate Detection
+
+A `DuplicateFundWarning` event is dispatched if:
+
+- A fund is created with a name matching:
+  - Another fund with the same manager
+  - OR an alias of a fund with the same manager
+
+### Listener
+
+- Logs duplicate warnings to `storage/logs/laravel.log`
+
+---
+
+## ⚖️ Design Considerations
+
+- **DRY + SOLID principles** followed in service, request, and controller layers
+- **Separation of concerns** between validation, logic, and data access
+- **Scalability** through relational DB normalization and indexed queries
+- **Testability**: Controllers depend on services and typed request classes
+- **Event handling** decouples detection logic from persistence
+
+---
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is licensed under the [MIT License](LICENSE).
